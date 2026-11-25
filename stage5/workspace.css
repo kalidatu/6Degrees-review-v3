@@ -1,0 +1,21 @@
+/* Only the outer workspace changes layout. Keep the card and graph styles local. */
+[data-testid="stMainBlockContainer"] {
+  padding: 4rem clamp(1rem, 2.2vw, 2.75rem) 2rem;
+}
+.st-key-v3_workspace h1 { font-size:2.15rem; padding:0; letter-spacing:-.04em }
+.st-key-v3_workspace h3 { font-size:1.22rem; padding:.15rem 0 }
+.st-key-v3_finder { border-radius:14px }
+.st-key-v3_results [role="radiogroup"] {
+  max-height:clamp(11rem, 48vh, 31rem); overflow-y:auto;
+  flex-flow:column nowrap; overflow-x:hidden; scrollbar-gutter:stable; overscroll-behavior:contain; gap:0;
+}
+.st-key-v3_results [role="radiogroup"] label {
+  flex:0 0 auto; padding:.35rem .15rem; border-bottom:1px solid rgba(103,136,126,.23);
+}
+@media (max-width: 900px) {
+  .st-key-v3_workspace > [data-testid="stLayoutWrapper"] > [data-testid="stHorizontalBlock"] {flex-direction:column}
+  .st-key-v3_workspace > [data-testid="stLayoutWrapper"] > [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] {
+    width:100%; flex:1 1 auto;
+  }
+  .st-key-v3_results [role="radiogroup"] {max-height:12rem}
+}

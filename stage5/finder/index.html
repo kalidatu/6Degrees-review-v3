@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8">
+<style>
+* {box-sizing:border-box} body {margin:0;font:14px system-ui,sans-serif;color:var(--text)}
+label {display:block;margin-bottom:7px} input {width:100%;font:inherit;font-size:16px;color:inherit;background:var(--field);border:1px solid transparent;border-radius:8px;padding:9px 12px}
+input:focus {outline:2px solid var(--accent);outline-offset:-2px}
+</style>
+<label for="query">Name or member ID</label>
+<input id="query" type="search" placeholder="Search by name or ID. Press Enter to open a unique match." autocomplete="off">
+<script>
+const input = document.getElementById("query");
+const parentOrigin = new URL(document.referrer).origin;
+let view = -1;
+function send(type, fields = {}) {
+  parent.postMessage({isStreamlitMessage:true, type, ...fields}, parentOrigin);
+}
+function publish(action) {
+  send("streamlit:setComponentValue", {dataType:"json", value:{
+    action, query:input.value, view, event:crypto.randomUUID()
+  }});
+}
+input.addEventListener("input", () => publish("edit"));
+input.addEventListener("keydown", event => {
+  if (event.key === "Enter" && !event.isComposing && !event.repeat) {
+    event.preventDefault();
+    publish("enter");
+  }
+});
+addEventListener("message", event => {
+  if (event.source !== parent || event.origin !== parentOrigin || event.data.type !== "streamlit:render") return;
+  const {args, theme} = event.data;
+  if (args.view > view) {
+    view = args.view;
+    input.value = args.query;
+  }
+  const style = document.documentElement.style;
+  style.setProperty("--text",theme?.textColor || "#222");
+  style.setProperty("--field",theme?.secondaryBackgroundColor || "#f0f2f6");
+  style.setProperty("--accent",theme?.primaryColor || "#f44");
+  send("streamlit:setFrameHeight",{height:70});
+});
+send("streamlit:componentReady",{apiVersion:1});
+</script></html>
